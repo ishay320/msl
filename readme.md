@@ -1,0 +1,2 @@
+# Dynamic array in c
+
