@@ -2,4 +2,4 @@
 
 
 array: ./main.c ./array.h
-	${CC} ./main.c -o $@
+	${CC} ./main.c -o $@ -ggdb3
