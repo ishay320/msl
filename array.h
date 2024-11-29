@@ -1,7 +1,13 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
+#include <assert.h>
+#include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * TODO: make it so:
@@ -19,7 +25,54 @@ struct array {
     size_t cap;
     size_t stride;
 
-    void* data;
+    uint8_t data;
 };
+
+#define ARRAY_HEADER_SIZE (sizeof(size_t) * 3)
+
+void* f_array_init(size_t cap, size_t stride)
+{
+    struct array* header = malloc(ARRAY_HEADER_SIZE + (stride * cap));
+    if (!header) {
+        perror("could not create dynamic array");
+        return NULL;
+    }
+
+    header->cap    = cap;
+    header->len    = 0;
+    header->stride = stride;
+
+    return &header->data;
+}
+
+bool f_array_push(void** array, void* element)
+{
+    assert(*array);
+    struct array* header = (*array) - ARRAY_HEADER_SIZE;
+    if (header->len == header->cap) {
+        size_t new_cap = header->cap * 2;
+        void* new_ptr =
+            realloc(header, new_cap * header->stride + ARRAY_HEADER_SIZE);
+        if (new_ptr) {
+            perror("could not create dynamic array");
+            return false;
+        }
+        header      = new_ptr;
+        header->cap = new_cap;
+
+        // update the outside ptr to the new position
+        *array = &header->data;
+    }
+
+    void* insert_pos = (&header->data) + (header->stride * header->len);
+    memcpy(insert_pos, element, header->stride);
+    header->len++;
+
+    return true;
+}
+
+#define array_init(type) (type*)f_array_init(1, sizeof(type))
+#define array_push(array, element) f_array_push((void**)&array, &element)
+#define array_push_r_val(array, element)
 
 #endif  // ARRAY_H
