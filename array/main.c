@@ -12,6 +12,9 @@ int main(int argc, char* argv[])
         printf("%d\n", array[i]);
     }
 
+    array_push_rval(array, 420);
+    printf("%d\n", array[50]);
+
     array_free(array);
     return 0;
 }

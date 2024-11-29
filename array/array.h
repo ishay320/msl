@@ -81,6 +81,10 @@ void f_array_free(void** array)
 #define array_init(type) (type*)f_array_init(1, sizeof(type))
 #define array_free(array) f_array_free((void**)&array)
 #define array_push(array, element) f_array_push((void**)&array, &element)
-#define array_push_r_val(array, element)
+#define array_push_rval(array, element)          \
+    ({                                           \
+        typeof(element) __tmp_value = (element); \
+        array_push((array), __tmp_value);        \
+    })
 
 #endif  // ARRAY_H
