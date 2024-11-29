@@ -1,5 +1,9 @@
 
-
+CFLAGS = -Wall -Wextra -g
 
 array: ./main.c ./array.h
-	${CC} ./main.c -o $@ -ggdb3
+	${CC} ${CFLAGS} ./main.c -o $@ -ggdb3
+
+test: ./test.c ./array.h
+	cc ${CFLAGS} $< -o $@
+	./$@
