@@ -53,7 +53,7 @@ bool f_array_push(void** array, void* element)
         size_t new_cap = header->cap * 2;
         void* new_ptr =
             realloc(header, new_cap * header->stride + ARRAY_HEADER_SIZE);
-        if (new_ptr) {
+        if (!new_ptr) {
             perror("could not create dynamic array");
             return false;
         }
@@ -71,7 +71,15 @@ bool f_array_push(void** array, void* element)
     return true;
 }
 
+void f_array_free(void** array)
+{
+    struct array* header = (*array) - ARRAY_HEADER_SIZE;
+    free(header);
+    *array = NULL;
+}
+
 #define array_init(type) (type*)f_array_init(1, sizeof(type))
+#define array_free(array) f_array_free((void**)&array)
 #define array_push(array, element) f_array_push((void**)&array, &element)
 #define array_push_r_val(array, element)
 

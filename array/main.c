@@ -12,6 +12,6 @@ int main(int argc, char* argv[])
         printf("%d\n", array[i]);
     }
 
-    // array_free(array);
+    array_free(array);
     return 0;
 }
