@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 
 #include "array.h"
 
@@ -8,6 +9,16 @@ void test_array_initialization()
     assert(arr != NULL);  // Verify array is initialized
     array_free(arr);
     printf("Initialization test passed.\n");
+}
+
+void test_array_init_sized()
+{
+    int* arr = array_init_sized(int, 10);
+    assert(arr != NULL);  // Verify array is initialized
+    struct array* header = (struct array*)(((uint8_t*)arr) - ARRAY_HEADER_SIZE);
+    assert(header->cap == 10);
+    array_free(arr);
+    printf("Initialization with size test passed.\n");
 }
 
 void test_array_push_rval()
@@ -33,7 +44,7 @@ void test_array_push()
     printf("Push test passed.\n");
 }
 
-void test_array_resizing()
+void test_array_resizing_dynamicly()
 {
     int* arr = array_init(int);
     for (int i = 0; i < 100; i++) {
@@ -46,7 +57,7 @@ void test_array_resizing()
         assert(arr[i] == i);
     }
     array_free(arr);
-    printf("Resizing test passed.\n");
+    printf("Resizing dynamicly test passed.\n");
 }
 
 void test_array_free()
@@ -58,12 +69,13 @@ void test_array_free()
     printf("Free test passed.\n");
 }
 
-int main()
+int main(void)
 {
     test_array_initialization();
+    test_array_init_sized();
     test_array_push_rval();
     test_array_push();
-    test_array_resizing();
+    test_array_resizing_dynamicly();
     test_array_free();
     printf("All tests passed!\n");
     return 0;
