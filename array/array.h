@@ -87,6 +87,45 @@ void f_array_free(void** array)
 }
 
 /**
+ * Get the capacity of the array.
+ *
+ * @param array pointer to the array.
+ * @return The capacity of the array.
+ */
+size_t array_cap(void* array)
+{
+    assert(array);
+    struct array* header = array - ARRAY_HEADER_SIZE;
+    return header->cap;
+}
+
+/**
+ * Get the length of the array.
+ *
+ * @param array pointer to the array.
+ * @return The number of elements currently in the array.
+ */
+size_t array_len(void* array)
+{
+    assert(array);
+    struct array* header = array - ARRAY_HEADER_SIZE;
+    return header->len;
+}
+
+/**
+ * Get the stride (size of each element) of the dynamic array.
+ *
+ * @param array pointer to the dynamic array.
+ * @return The size in bytes of each element in the array.
+ */
+size_t array_stride(void* array)
+{
+    assert(array);
+    struct array* header = array - ARRAY_HEADER_SIZE;
+    return header->stride;
+}
+
+/**
  * Initialisation of the dynamic array
  *
  * @param type is the array to init.

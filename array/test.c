@@ -69,6 +69,48 @@ void test_array_free()
     printf("Free test passed.\n");
 }
 
+void test_array_cap()
+{
+    int* arr             = array_init_sized(int, 50);
+    struct array* header = (struct array*)(((uint8_t*)arr) - ARRAY_HEADER_SIZE);
+    assert(array_cap(arr) == header->cap);
+    assert(header->cap == 50);
+    array_free(arr);
+    printf("Capacity test passed.\n");
+}
+
+void test_array_len()
+{
+    int* arr = array_init(int);
+    assert(array_len(arr) == 0);  // Initially, the length should be 0.
+
+    array_push_rval(arr, 42);
+    assert(array_len(arr) == 1);  // After one push, the length should be 1.
+
+    array_push_rval(arr, 100);
+    assert(array_len(arr) == 2);  // After two pushes, the length should be 2.
+
+    array_free(arr);
+    printf("Length test passed.\n");
+}
+
+void test_array_stride()
+{
+    int* int_arr = array_init(int);
+    assert(array_stride(int_arr) ==
+           sizeof(int));  // Stride for int array should match sizeof(int).
+
+    double* double_arr = array_init(double);
+    assert(
+        array_stride(double_arr) ==
+        sizeof(
+            double));  // Stride for double array should match sizeof(double).
+
+    array_free(int_arr);
+    array_free(double_arr);
+    printf("Stride test passed.\n");
+}
+
 int main(void)
 {
     test_array_initialization();
@@ -77,6 +119,9 @@ int main(void)
     test_array_push();
     test_array_resizing_dynamicly();
     test_array_free();
+    test_array_cap();
+    test_array_len();
+    test_array_stride();
     printf("All tests passed!\n");
     return 0;
 }
