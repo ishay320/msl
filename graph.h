@@ -1,12 +1,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <assert.h>
 #include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "array.h"
 
@@ -55,25 +50,27 @@ size_t push_node(struct graph* g, struct payload p)
     return node.id;
 }
 
-bool connect_nodes(struct graph* g, size_t node_id_a, size_t node_id_b)
+bool connect_nodes(struct graph* g, size_t node_id_from, size_t node_id_to)
 {
-    if (node_id_b != node_id_a || node_id_a < g->inc_id ||
-        node_id_b < g->inc_id) {
+    if (node_id_to == node_id_from || node_id_from > g->inc_id ||
+        node_id_to > g->inc_id) {
         return false;
     }
 
     bool a_exists = false;
     bool b_exists = false;
     for (size_t i = 0; i < array_len(g->nodes); i++) {
-        if (g->nodes[i].id == node_id_a) {
+        if (g->nodes[i].id == node_id_from) {
             a_exists = true;
         }
-        if (g->nodes[i].id == node_id_b) {
+        if (g->nodes[i].id == node_id_to) {
             b_exists = true;
         }
     }
     if (a_exists && b_exists) {
         struct edge e;
+        e.id_node_from = node_id_from;
+        e.id_node_to   = node_id_to;
         array_push(g->edges, e);
         return true;
     }

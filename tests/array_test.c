@@ -150,6 +150,7 @@ int main(void)
     test_array_stride();
     test_array_resize();
     test_array_reserve();
-    printf("All tests passed!\n");
+    printf("All array tests passed!\n");
+
     return 0;
 }
