@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "array.h"
+#include "../array.h"
 
 void test_array_initialization()
 {

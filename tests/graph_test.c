@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../array/array.h"
+#include "../array.h"
 
 // Graph base on arrays:
 // 1. Nodes array which holds the nodes
