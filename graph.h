@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "da.h"
+#include "array.h"
 
 // Graph base on arrays:
 // 1. Nodes array which holds the nodes

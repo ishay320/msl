@@ -1,12 +1,16 @@
-CFLAGS = -Wall -Wextra -g
+CFLAGS = -Wall -Wextra -g -Werror=extra -fsanitize=address,undefined 
 
 all: graph array
-.PHONY: all
+
+test: graph array
+	./graph
+	./array
+
+.PHONY: all test
 
 graph: ./graph_test.c ../graph.h
-	cc ${CFLAGS} -Werror=extra -fsanitize=address,undefined $< -o $@ -ggdb3
-	./$@
+	cc ${CFLAGS} $< -o $@ -ggdb3
 
 array: ./array_test.c ../array.h
-	cc ${CFLAGS} -Werror=extra -fsanitize=address,undefined $< -o $@ -ggdb3
-	./$@
+	cc ${CFLAGS} $< -o $@ -ggdb3
+
