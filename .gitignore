@@ -1,3 +1,5 @@
 */test
+tests/array
+test/graph
 .cache/
 */compile_commands.json

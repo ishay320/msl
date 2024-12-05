@@ -1,7 +1,12 @@
-// here will be graph structure and support functions for it
+#ifndef GRAPH_H
+#define GRAPH_H
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "array.h"
 
@@ -10,30 +15,83 @@
 // 2. Edges array which holds the edges - every one is 1 connection between
 //    nodes and data associated with it
 
-struct node {};
-struct edge {};
+struct payload {};
 
-struct gr_nodes {
-    struct node* data;
-    size_t len;
-    size_t cap;
+struct edge {
+    size_t id_node_from;
+    size_t id_node_to;
 };
 
-struct gr_edges {
-    struct edge* data;
-    size_t len;
-    size_t cap;
+struct node {
+    size_t id;
+    struct payload data;
 };
 
 struct graph {
-    struct gr_nodes nodes;
-    struct gr_edges edges;
+    struct node* nodes;
+    struct edge* edges;
+
+    size_t inc_id;
 };
 
-struct graph init_graph();
+struct graph* init_graph()
+{
+    struct graph* g = malloc(sizeof(struct graph));
+    g->nodes        = array_init(struct node);
+    g->edges        = array_init(struct edge);
+    g->inc_id       = 0;
 
-size_t push_node(struct graph* g, struct node* node);
+    return g;
+}
 
-bool connect_nodes(struct graph* g, size_t node_id_a, size_t node_id_b);
-struct node get_node(struct graph* g, size_t node_id);
-struct eadge get_eadges(struct graph* g, size_t node_id);
+size_t push_node(struct graph* g, struct payload p)
+{
+    struct node node;
+    node.id   = g->inc_id++;
+    node.data = p;
+
+    array_push(g->nodes, node);
+
+    return node.id;
+}
+
+bool connect_nodes(struct graph* g, size_t node_id_a, size_t node_id_b)
+{
+    if (node_id_b != node_id_a || node_id_a < g->inc_id ||
+        node_id_b < g->inc_id) {
+        return false;
+    }
+
+    bool a_exists = false;
+    bool b_exists = false;
+    for (size_t i = 0; i < array_len(g->nodes); i++) {
+        if (g->nodes[i].id == node_id_a) {
+            a_exists = true;
+        }
+        if (g->nodes[i].id == node_id_b) {
+            b_exists = true;
+        }
+    }
+    if (a_exists && b_exists) {
+        struct edge e;
+        array_push(g->edges, e);
+        return true;
+    }
+    return false;
+}
+
+void free_graph(struct graph* g)
+{
+    array_free(g->nodes);
+    array_free(g->edges);
+    g->nodes = NULL;
+    g->edges = NULL;
+
+    free(g);
+}
+
+struct node* get_node(struct graph* g, size_t node_id);
+struct node* find_node(struct graph* g, bool (*equals)(struct node*));
+struct eadge get_node_eadges(struct graph* g, size_t node_id);
+
+#endif  // GRAPH_H
