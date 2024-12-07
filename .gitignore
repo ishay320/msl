@@ -1,5 +1,5 @@
 */test
-tests/array
-test/graph
+./tests/array
+./tests/graph
 .cache/
 */compile_commands.json
