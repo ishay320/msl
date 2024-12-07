@@ -10,8 +10,6 @@
 // 2. Edges array which holds the edges - every one is 1 connection between
 //    nodes and data associated with it
 
-struct payload {};
-
 struct edge {
     size_t id_node_from;
     size_t id_node_to;
@@ -19,7 +17,7 @@ struct edge {
 
 struct node {
     size_t id;
-    struct payload data;
+    void* data;
 };
 
 struct graph {
@@ -29,7 +27,7 @@ struct graph {
     size_t inc_id;
 };
 
-struct graph* init_graph()
+struct graph* graph_init()
 {
     struct graph* g = malloc(sizeof(struct graph));
     g->nodes        = array_init(struct node);
@@ -39,7 +37,7 @@ struct graph* init_graph()
     return g;
 }
 
-size_t push_node(struct graph* g, struct payload p)
+size_t graph_node_push(struct graph* g, void* p)
 {
     struct node node;
     node.id   = g->inc_id++;
@@ -50,7 +48,7 @@ size_t push_node(struct graph* g, struct payload p)
     return node.id;
 }
 
-bool connect_nodes(struct graph* g, size_t node_id_from, size_t node_id_to)
+bool graph_eadge_create(struct graph* g, size_t node_id_from, size_t node_id_to)
 {
     if (node_id_to == node_id_from || node_id_from > g->inc_id ||
         node_id_to > g->inc_id) {
@@ -77,7 +75,7 @@ bool connect_nodes(struct graph* g, size_t node_id_from, size_t node_id_to)
     return false;
 }
 
-void free_graph(struct graph* g)
+void graph_free(struct graph* g)
 {
     array_free(g->nodes);
     array_free(g->edges);
@@ -87,8 +85,26 @@ void free_graph(struct graph* g)
     free(g);
 }
 
-struct node* get_node(struct graph* g, size_t node_id);
-struct node* find_node(struct graph* g, bool (*equals)(struct node*));
-struct eadge get_node_eadges(struct graph* g, size_t node_id);
+struct node* graph_node_get(struct graph* g, size_t node_id)
+{
+    for (size_t i = 0; i < array_len(g->nodes); i++) {
+        if (node_id == g->nodes[i].id) {
+            return &g->nodes[i];
+        }
+    }
+    return NULL;
+}
+
+struct node* graph_node_find(struct graph* g, bool (*equals)(struct node))
+{
+    for (size_t i = 0; i < array_len(g->nodes); i++) {
+        if (equals(g->nodes[i])) {
+            return &g->nodes[i];
+        }
+    }
+    return NULL;
+}
+
+struct eadge graph_node_eadges_get(struct graph* g, size_t node_id);
 
 #endif  // GRAPH_H

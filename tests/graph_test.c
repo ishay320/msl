@@ -7,61 +7,66 @@
 
 void test_graph_initialization()
 {
-    struct graph* g = init_graph();
+    struct graph* g = graph_init();
     assert(g != NULL);
     assert(g->nodes != NULL);
     assert(g->edges != NULL);
     assert(g->inc_id == 0);
 
-    free_graph(g);
+    graph_free(g);
     printf("Graph initialization test passed.\n");
 }
 
 void test_push_node()
 {
-    struct graph* g  = init_graph();
-    struct payload p = {};
+    struct graph* g = graph_init();
+    int* p          = malloc(sizeof(*p));
 
-    size_t id1 = push_node(g, p);
-    size_t id2 = push_node(g, p);
+    size_t id1 = graph_node_push(g, p);
+    size_t id2 = graph_node_push(g, p);
 
     assert(array_len(g->nodes) == 2);
     assert(g->nodes[0].id == id1);
     assert(g->nodes[1].id == id2);
 
-    free_graph(g);
+    assert(g->nodes[0].data == p);
+    assert(g->nodes[1].data == p);
+
+    graph_free(g);
+    free(p);
     printf("Push node test passed.\n");
 }
 
 void test_connect_nodes()
 {
-    struct graph* g  = init_graph();
-    struct payload p = {};
+    struct graph* g = graph_init();
+    int* p          = malloc(sizeof(*p));
 
-    size_t id1 = push_node(g, p);
-    size_t id2 = push_node(g, p);
+    size_t id1 = graph_node_push(g, p);
+    size_t id2 = graph_node_push(g, p);
 
-    assert(connect_nodes(g, id1, id2) == true);
+    assert(graph_eadge_create(g, id1, id2) == true);
     assert(array_len(g->edges) == 1);
 
     struct edge e = g->edges[0];
     assert(e.id_node_from == id1);
     assert(e.id_node_to == id2);
 
-    assert(connect_nodes(g, id1, 999) == false);
+    assert(graph_eadge_create(g, id1, 999) == false);
 
-    free_graph(g);
+    graph_free(g);
+    free(p);
     printf("Connect nodes test passed.\n");
 }
 
 void test_free_graph()
 {
-    struct graph* g  = init_graph();
-    struct payload p = {};
+    struct graph* g = graph_init();
+    int* p          = malloc(sizeof(*p));
 
-    push_node(g, p);
-    free_graph(g);
-
+    graph_node_push(g, p);
+    graph_free(g);
+    free(p);
     printf("Free graph test passed.\n");
 }
 

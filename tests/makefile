@@ -4,6 +4,7 @@ all: graph array
 
 test: graph array
 	./graph
+	@echo
 	./array
 
 .PHONY: all test
