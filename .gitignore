@@ -1,4 +1,5 @@
-array/array
-array/test
+*/test
+./tests/array
+./tests/graph
 .cache/
 */compile_commands.json
