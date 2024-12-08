@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void test_graph_initialization()
 {
@@ -134,6 +135,28 @@ void test_graph_edge_creation_memory_safety()
     printf("Edge creation memory safety test passed.\n");
 }
 
+void test_graph_node_edges_get()
+{
+    struct graph* g = graph_init();
+    int* foo        = NULL;
+    size_t node_a   = graph_node_push(g, foo);
+    size_t node_b   = graph_node_push(g, foo);
+
+    size_t array_len;
+    struct edge* e = graph_node_edges_get(g, node_a, &array_len);
+    assert(array_len == 0);
+    free(e);
+
+    assert(graph_eadge_create(g, node_a, node_b) == true);
+    e = graph_node_edges_get(g, node_a, &array_len);
+    assert(array_len == 1);
+    assert(e[0].id_node_to == node_b);
+    free(e);
+
+    graph_free(g);
+    printf("Edges get test passed.");
+}
+
 int main()
 {
     test_graph_initialization();
@@ -143,6 +166,7 @@ int main()
     test_graph_node_get();
     test_graph_node_find();
     test_graph_edge_creation_memory_safety();
+    test_graph_node_edges_get();
     printf("All graph tests passed!\n");
 
     return 0;

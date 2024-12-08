@@ -2,6 +2,7 @@
 #define GRAPH_H
 
 #include <stdbool.h>
+#include <stddef.h>
 
 #include "array.h"
 
@@ -105,6 +106,25 @@ struct node* graph_node_find(struct graph* g, bool (*equals)(struct node))
     return NULL;
 }
 
-struct eadge graph_node_eadges_get(struct graph* g, size_t node_id);
+struct edge* graph_node_edges_get(const struct graph* g, size_t node_id_from,
+                                  size_t* output_array_len)
+{
+    // TODO: make this better
+    struct edge* edges = array_init(struct edge);
+    for (size_t i = 0; i < array_len(g->edges); i++) {
+        if (g->edges[i].id_node_from == node_id_from) {
+            array_push(edges, g->edges[i]);
+        }
+    }
+
+    *output_array_len = array_len(edges);
+    struct edge* output_edges =
+        malloc(sizeof(*output_edges) * (*output_array_len));
+    for (size_t i = 0; i < *output_array_len; i++) {
+        output_edges[i] = edges[i];
+    }
+    array_free(edges);
+    return output_edges;
+}
 
 #endif  // GRAPH_H
