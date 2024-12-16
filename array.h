@@ -185,6 +185,23 @@ bool f_array_push(void** array, void* element)
 }
 
 /**
+ * Remove from the array using index
+ *
+ * @param array pointer to the array.
+ * @param index at the position to remove
+ */
+void array_remove_index(void* array, size_t index)
+{
+    assert(array);
+    struct array* header = array_get_header(array);
+    assert(header->len > index);
+
+    memmove(header->data + index, header->data + ((index + 1) * header->stride),
+            (header->len - 1 - index) * header->stride);
+    header->len--;
+}
+
+/**
  * Get the capacity of the array.
  *
  * @param array pointer to the array.

@@ -137,6 +137,36 @@ void test_array_resize()
     printf("Resize test passed.\n");
 }
 
+void test_array_remove_index()
+{
+    int* array = array_init(int);
+
+    array_push_rval(array, 12);
+    assert(array_len(array) == 1);
+    array_remove_index(array, 0);
+    assert(array_len(array) == 0);
+
+    array_push_rval(array, 42);
+    array_push_rval(array, 52);
+    array_push_rval(array, 22);
+    assert(array[0] == 42);
+    assert(array_len(array) == 3);
+
+    array_remove_index(array, 0);
+    assert(array_len(array) == 2);
+    assert(array[0] == 52);
+
+    array_push_rval(array, 25);
+    assert(array_len(array) == 3);
+    assert(array[2] == 25);
+    array_remove_index(array, 0);
+    assert(array[1] == 25);
+    assert(array_len(array) == 2);
+
+    array_free(array);
+    printf("Remove index test passed.\n");
+}
+
 int main(void)
 {
     test_array_initialization();
@@ -150,6 +180,7 @@ int main(void)
     test_array_stride();
     test_array_resize();
     test_array_reserve();
+    test_array_remove_index();
     printf("All array tests passed!\n");
 
     return 0;
