@@ -49,6 +49,10 @@ size_t graph_node_push(struct graph* g, void* p)
     return node.id;
 }
 
+size_t graph_nodes_count(struct graph* g) { return array_len(g->nodes); }
+
+size_t graph_edges_count(struct graph* g) { return array_len(g->edges); }
+
 bool graph_eadge_create(struct graph* g, size_t node_id_from, size_t node_id_to)
 {
     if (node_id_to == node_id_from || node_id_from > g->inc_id ||
