@@ -123,6 +123,12 @@ void test_array_resize() {
     printf("Resize test passed.\n");
 }
 
+typedef struct {
+    int id;
+    float value;
+    char tag[8];
+} test_item_t;
+
 void test_array_remove_index() {
     int* array = array_init(int);
 
@@ -149,6 +155,34 @@ void test_array_remove_index() {
     assert(array_len(array) == 2);
 
     array_free(array);
+
+    /* struct test: stride > 1, verifies dst offset uses stride */
+    test_item_t* sarr = array_init(test_item_t);
+    test_item_t a     = {.id = 1, .value = 1.0f, .tag = "one"};
+    test_item_t b     = {.id = 2, .value = 2.0f, .tag = "two"};
+    test_item_t c     = {.id = 3, .value = 3.0f, .tag = "three"};
+    array_push(sarr, a);
+    array_push(sarr, b);
+    array_push(sarr, c);
+
+    /* remove middle: [1,2,3] -> [1,3] */
+    array_remove_index(sarr, 1);
+    assert(array_len(sarr) == 2);
+    assert(sarr[0].id == 1);
+    assert(sarr[1].id == 3);
+    assert(sarr[1].value == 3.0f);
+
+    /* remove first: [1,3] -> [3] */
+    array_remove_index(sarr, 0);
+    assert(array_len(sarr) == 1);
+    assert(sarr[0].id == 3);
+    assert(sarr[0].value == 3.0f);
+
+    /* remove last: [3] -> [] */
+    array_remove_index(sarr, 0);
+    assert(array_len(sarr) == 0);
+
+    array_free(sarr);
     printf("Remove index test passed.\n");
 }
 

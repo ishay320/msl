@@ -35,6 +35,10 @@ struct array {
     uint8_t data[];
 };
 
+#ifndef MSL_INLINE
+#define MSL_INLINE static inline
+#endif
+
 #define ARRAY_HEADER_SIZE (sizeof(size_t) * 3)
 
 /**
@@ -59,7 +63,7 @@ struct array {
  *
  * @param array is the array to free.
  */
-void array_free(void* array);
+MSL_INLINE void array_free(void* array);
 
 /**
  * Push an element to the array
@@ -90,7 +94,7 @@ void array_free(void* array);
  * @param a is the array.
  * @return header of the array
  */
-#define array_get_header(a) (void*)(a) - ARRAY_HEADER_SIZE;
+#define array_get_header(a) ((struct array*)((uint8_t*)(a) - ARRAY_HEADER_SIZE))
 
 /**
  * Reserves space in the array, if the array is bigger then the reserve size, it
@@ -111,7 +115,7 @@ void array_free(void* array);
  */
 #define array_resize(array, resize) f_array_resize((void**)(&array), resize)
 
-void* f_array_init(size_t stride, size_t cap) {
+MSL_INLINE void* f_array_init(size_t stride, size_t cap) {
     struct array* header = malloc(ARRAY_HEADER_SIZE + (stride * cap));
     if (!header) {
         perror("could not create dynamic array");
@@ -125,13 +129,13 @@ void* f_array_init(size_t stride, size_t cap) {
     return header->data;
 }
 
-void array_free(void* array) {
+MSL_INLINE void array_free(void* array) {
     assert(array);
     struct array* header = array_get_header(array);
     free(header);
 }
 
-bool f_array_resize(void** array, size_t size) {
+MSL_INLINE bool f_array_resize(void** array, size_t size) {
     assert(*array);
     struct array* header = array_get_header(*array);
     void* new_ptr        = realloc(header, size * header->stride + ARRAY_HEADER_SIZE);
@@ -151,7 +155,7 @@ bool f_array_resize(void** array, size_t size) {
     return true;
 }
 
-bool f_array_reserve(void** array, size_t size) {
+MSL_INLINE bool f_array_reserve(void** array, size_t size) {
     assert(*array);
     struct array* header = array_get_header(*array);
     if (header->cap >= size) {
@@ -161,10 +165,10 @@ bool f_array_reserve(void** array, size_t size) {
     return f_array_resize(array, size);
 }
 
-bool f_array_push(void** array, void* element) {
+MSL_INLINE bool f_array_push(void** array, void* element) {
     assert(*array);
     struct array* header = array_get_header(*array);
-    if (header->len == header->cap) {
+    if (__builtin_expect(header->len == header->cap, 0)) {
         size_t new_cap = header->cap * 2;
         if (!f_array_resize(array, new_cap)) {
             return false;
@@ -172,8 +176,7 @@ bool f_array_push(void** array, void* element) {
         header = array_get_header(*array);
     }
 
-    void* insert_pos = header->data + (header->stride * header->len);
-    memcpy(insert_pos, element, header->stride);
+    __builtin_memcpy((uint8_t*)*array + header->stride * header->len, element, header->stride);
     header->len++;
 
     return true;
@@ -185,12 +188,12 @@ bool f_array_push(void** array, void* element) {
  * @param array pointer to the array.
  * @param index at the position to remove
  */
-void array_remove_index(void* array, size_t index) {
+MSL_INLINE void array_remove_index(void* array, size_t index) {
     assert(array);
     struct array* header = array_get_header(array);
     assert(header->len > index);
 
-    memmove(header->data + index, header->data + ((index + 1) * header->stride), (header->len - 1 - index) * header->stride);
+    memmove(header->data + (index * header->stride), header->data + ((index + 1) * header->stride), (header->len - 1 - index) * header->stride);
     header->len--;
 }
 
@@ -200,7 +203,7 @@ void array_remove_index(void* array, size_t index) {
  * @param array pointer to the array.
  * @return The capacity of the array.
  */
-size_t array_cap(void* array) {
+MSL_INLINE size_t array_cap(void* array) {
     assert(array);
     struct array* header = array_get_header(array);
     return header->cap;
@@ -212,7 +215,7 @@ size_t array_cap(void* array) {
  * @param array pointer to the array.
  * @return The number of elements currently in the array.
  */
-size_t array_len(void* array) {
+MSL_INLINE size_t array_len(void* array) {
     assert(array);
     struct array* header = array_get_header(array);
     return header->len;
@@ -224,7 +227,7 @@ size_t array_len(void* array) {
  * @param array pointer to the dynamic array.
  * @return The size in bytes of each element in the array.
  */
-size_t array_stride(void* array) {
+MSL_INLINE size_t array_stride(void* array) {
     assert(array);
     struct array* header = array_get_header(array);
     return header->stride;
