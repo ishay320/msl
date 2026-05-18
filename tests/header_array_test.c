@@ -1,18 +1,16 @@
-#include "../array.h"
+#include "../arrays/header_array.h"
 
 #include <assert.h>
 #include <stdio.h>
 
-void test_array_initialization()
-{
+void test_array_initialization() {
     int* arr = array_init(int);
     assert(arr != NULL);  // verify array is initialized
     array_free(arr);
     printf("Initialization test passed.\n");
 }
 
-void test_array_init_sized()
-{
+void test_array_init_sized() {
     int* arr = array_init_sized(int, 10);
     assert(arr != NULL);  // verify array is initialized
     struct array* header = array_get_header(arr);
@@ -21,8 +19,7 @@ void test_array_init_sized()
     printf("Initialization with size test passed.\n");
 }
 
-void test_array_push_rval()
-{
+void test_array_push_rval() {
     int* arr = array_init(int);
     array_push_rval(arr, 42);
     struct array* header = array_get_header(arr);
@@ -32,8 +29,7 @@ void test_array_push_rval()
     printf("Push r_val test passed.\n");
 }
 
-void test_array_push()
-{
+void test_array_push() {
     int* arr = array_init(int);
     int item = 42;
     array_push(arr, item);
@@ -44,8 +40,7 @@ void test_array_push()
     printf("Push test passed.\n");
 }
 
-void test_array_resizing_dynamicly()
-{
+void test_array_resizing_dynamicly() {
     int* arr = array_init(int);
     for (int i = 0; i < 100; i++) {
         array_push(arr, i);
@@ -60,16 +55,14 @@ void test_array_resizing_dynamicly()
     printf("Resizing dynamicly test passed.\n");
 }
 
-void test_array_free()
-{
+void test_array_free() {
     int* arr = array_init(int);
     array_push_rval(arr, 10);
     array_free(arr);
     printf("Free test passed.\n");
 }
 
-void test_array_cap()
-{
+void test_array_cap() {
     int* arr             = array_init_sized(int, 50);
     struct array* header = array_get_header(arr);
     assert(array_cap(arr) == header->cap);
@@ -78,8 +71,7 @@ void test_array_cap()
     printf("Capacity test passed.\n");
 }
 
-void test_array_len()
-{
+void test_array_len() {
     int* arr = array_init(int);
     assert(array_len(arr) == 0);  // initially, the length should be 0
 
@@ -93,24 +85,19 @@ void test_array_len()
     printf("Length test passed.\n");
 }
 
-void test_array_stride()
-{
+void test_array_stride() {
     int* int_arr = array_init(int);
-    assert(array_stride(int_arr) ==
-           sizeof(int));  // stride for int array should match sizeof(int)
+    assert(array_stride(int_arr) == sizeof(int));  // stride for int array should match sizeof(int)
 
     double* double_arr = array_init(double);
-    assert(
-        array_stride(double_arr) ==
-        sizeof(double));  // stride for double array should match sizeof(double)
+    assert(array_stride(double_arr) == sizeof(double));  // stride for double array should match sizeof(double)
 
     array_free(int_arr);
     array_free(double_arr);
     printf("Stride test passed.\n");
 }
 
-void test_array_reserve()
-{
+void test_array_reserve() {
     int* array = array_init(int);
     assert(array_reserve(array, 10));
     assert(array_cap(array) == 10);
@@ -123,8 +110,7 @@ void test_array_reserve()
     printf("Reserve test passed.\n");
 }
 
-void test_array_resize()
-{
+void test_array_resize() {
     int* array = array_init(int);
     assert(array_resize(array, 10));
     assert(array_cap(array) == 10);
@@ -137,8 +123,7 @@ void test_array_resize()
     printf("Resize test passed.\n");
 }
 
-void test_array_remove_index()
-{
+void test_array_remove_index() {
     int* array = array_init(int);
 
     array_push_rval(array, 12);
@@ -167,8 +152,7 @@ void test_array_remove_index()
     printf("Remove index test passed.\n");
 }
 
-int main(void)
-{
+int main(void) {
     test_array_initialization();
     test_array_init_sized();
     test_array_push_rval();
@@ -181,7 +165,7 @@ int main(void)
     test_array_resize();
     test_array_reserve();
     test_array_remove_index();
-    printf("All array tests passed!\n");
+    printf("All header array tests passed!\n");
 
     return 0;
 }

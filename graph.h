@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "array.h"
+#include "header_array.h"
 
 // Graph base on arrays:
 // 1. Nodes array which holds the nodes
@@ -28,8 +28,7 @@ struct graph {
     size_t inc_id;
 };
 
-struct graph* graph_init()
-{
+struct graph* graph_init() {
     struct graph* g = malloc(sizeof(struct graph));
     g->nodes        = array_init(struct node);
     g->edges        = array_init(struct edge);
@@ -38,8 +37,7 @@ struct graph* graph_init()
     return g;
 }
 
-size_t graph_node_push(struct graph* g, void* p)
-{
+size_t graph_node_push(struct graph* g, void* p) {
     struct node node;
     node.id   = g->inc_id++;
     node.data = p;
@@ -53,10 +51,8 @@ size_t graph_nodes_count(struct graph* g) { return array_len(g->nodes); }
 
 size_t graph_edges_count(struct graph* g) { return array_len(g->edges); }
 
-bool graph_eadge_create(struct graph* g, size_t node_id_from, size_t node_id_to)
-{
-    if (node_id_to == node_id_from || node_id_from > g->inc_id ||
-        node_id_to > g->inc_id) {
+bool graph_eadge_create(struct graph* g, size_t node_id_from, size_t node_id_to) {
+    if (node_id_to == node_id_from || node_id_from > g->inc_id || node_id_to > g->inc_id) {
         return false;
     }
 
@@ -80,8 +76,7 @@ bool graph_eadge_create(struct graph* g, size_t node_id_from, size_t node_id_to)
     return false;
 }
 
-void graph_free(struct graph* g)
-{
+void graph_free(struct graph* g) {
     array_free(g->nodes);
     array_free(g->edges);
     g->nodes = NULL;
@@ -90,8 +85,7 @@ void graph_free(struct graph* g)
     free(g);
 }
 
-struct node* graph_node_get(struct graph* g, size_t node_id)
-{
+struct node* graph_node_get(struct graph* g, size_t node_id) {
     for (size_t i = 0; i < array_len(g->nodes); i++) {
         if (node_id == g->nodes[i].id) {
             return &g->nodes[i];
@@ -100,8 +94,7 @@ struct node* graph_node_get(struct graph* g, size_t node_id)
     return NULL;
 }
 
-struct node* graph_node_find(struct graph* g, bool (*equals)(struct node))
-{
+struct node* graph_node_find(struct graph* g, bool (*equals)(struct node)) {
     for (size_t i = 0; i < array_len(g->nodes); i++) {
         if (equals(g->nodes[i])) {
             return &g->nodes[i];
@@ -110,9 +103,7 @@ struct node* graph_node_find(struct graph* g, bool (*equals)(struct node))
     return NULL;
 }
 
-struct edge* graph_node_edges_get(const struct graph* g, size_t node_id_from,
-                                  size_t* output_array_len)
-{
+struct edge* graph_node_edges_get(const struct graph* g, size_t node_id_from, size_t* output_array_len) {
     // TODO: make this better
     struct edge* edges = array_init(struct edge);
     for (size_t i = 0; i < array_len(g->edges); i++) {
@@ -121,9 +112,8 @@ struct edge* graph_node_edges_get(const struct graph* g, size_t node_id_from,
         }
     }
 
-    *output_array_len = array_len(edges);
-    struct edge* output_edges =
-        malloc(sizeof(*output_edges) * (*output_array_len));
+    *output_array_len         = array_len(edges);
+    struct edge* output_edges = malloc(sizeof(*output_edges) * (*output_array_len));
     for (size_t i = 0; i < *output_array_len; i++) {
         output_edges[i] = edges[i];
     }

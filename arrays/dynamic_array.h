@@ -1,7 +1,10 @@
+#ifndef DYNAMIC_ARRAY_H
+#define DYNAMIC_ARRAY_H
+
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
+
 /*
  * Generic dynamic array via macros.
  * Define an empty struct with size, capacity, data and use:
@@ -79,3 +82,5 @@
             (array)->capacity = 0;    \
         }                             \
     } while (0)
+
+#endif  // DYNAMIC_ARRAY_H

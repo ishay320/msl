@@ -1,5 +1,5 @@
-#ifndef ARRAY_H
-#define ARRAY_H
+#ifndef HEADER_ARRAY_H
+#define HEADER_ARRAY_H
 
 #include <assert.h>
 #include <stdbool.h>
@@ -111,8 +111,7 @@ void array_free(void* array);
  */
 #define array_resize(array, resize) f_array_resize((void**)(&array), resize)
 
-void* f_array_init(size_t stride, size_t cap)
-{
+void* f_array_init(size_t stride, size_t cap) {
     struct array* header = malloc(ARRAY_HEADER_SIZE + (stride * cap));
     if (!header) {
         perror("could not create dynamic array");
@@ -126,18 +125,16 @@ void* f_array_init(size_t stride, size_t cap)
     return header->data;
 }
 
-void array_free(void* array)
-{
+void array_free(void* array) {
     assert(array);
     struct array* header = array_get_header(array);
     free(header);
 }
 
-bool f_array_resize(void** array, size_t size)
-{
+bool f_array_resize(void** array, size_t size) {
     assert(*array);
     struct array* header = array_get_header(*array);
-    void* new_ptr = realloc(header, size * header->stride + ARRAY_HEADER_SIZE);
+    void* new_ptr        = realloc(header, size * header->stride + ARRAY_HEADER_SIZE);
     if (!new_ptr) {
         perror("could not resize array");
         return false;
@@ -154,8 +151,7 @@ bool f_array_resize(void** array, size_t size)
     return true;
 }
 
-bool f_array_reserve(void** array, size_t size)
-{
+bool f_array_reserve(void** array, size_t size) {
     assert(*array);
     struct array* header = array_get_header(*array);
     if (header->cap >= size) {
@@ -165,8 +161,7 @@ bool f_array_reserve(void** array, size_t size)
     return f_array_resize(array, size);
 }
 
-bool f_array_push(void** array, void* element)
-{
+bool f_array_push(void** array, void* element) {
     assert(*array);
     struct array* header = array_get_header(*array);
     if (header->len == header->cap) {
@@ -190,14 +185,12 @@ bool f_array_push(void** array, void* element)
  * @param array pointer to the array.
  * @param index at the position to remove
  */
-void array_remove_index(void* array, size_t index)
-{
+void array_remove_index(void* array, size_t index) {
     assert(array);
     struct array* header = array_get_header(array);
     assert(header->len > index);
 
-    memmove(header->data + index, header->data + ((index + 1) * header->stride),
-            (header->len - 1 - index) * header->stride);
+    memmove(header->data + index, header->data + ((index + 1) * header->stride), (header->len - 1 - index) * header->stride);
     header->len--;
 }
 
@@ -207,8 +200,7 @@ void array_remove_index(void* array, size_t index)
  * @param array pointer to the array.
  * @return The capacity of the array.
  */
-size_t array_cap(void* array)
-{
+size_t array_cap(void* array) {
     assert(array);
     struct array* header = array_get_header(array);
     return header->cap;
@@ -220,8 +212,7 @@ size_t array_cap(void* array)
  * @param array pointer to the array.
  * @return The number of elements currently in the array.
  */
-size_t array_len(void* array)
-{
+size_t array_len(void* array) {
     assert(array);
     struct array* header = array_get_header(array);
     return header->len;
@@ -233,11 +224,10 @@ size_t array_len(void* array)
  * @param array pointer to the dynamic array.
  * @return The size in bytes of each element in the array.
  */
-size_t array_stride(void* array)
-{
+size_t array_stride(void* array) {
     assert(array);
     struct array* header = array_get_header(array);
     return header->stride;
 }
 
-#endif  // ARRAY_H
+#endif  // HEADER_ARRAY_H
