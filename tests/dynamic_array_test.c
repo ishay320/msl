@@ -4,6 +4,10 @@
 #include <limits.h>
 #include <stdio.h>
 
+#include "../ansi.h"
+
+void print_success(const char* test_name) { printf(AN_GREEN "Test '%s' passed.\n" AN_RESET, test_name); }
+
 typedef struct {
     size_t size;
     size_t capacity;
@@ -25,7 +29,7 @@ void test_da_i_append() {
     for (int i = 0; i < 5; i++) assert(arr.data[i] == vals[i]);
 
     da_destroy(&arr);
-    printf("da_i append test passed.\n");
+    print_success("da_i_append");
 }
 
 void test_da_i_double_destroy() {
@@ -36,7 +40,7 @@ void test_da_i_double_destroy() {
     assert(arr.size == 0);
     assert(arr.capacity == 0);
     da_destroy(&arr);
-    printf("da_i double destroy test passed.\n");
+    print_success("da_i_double_destroy");
 }
 
 void test_da_p_empty() {
@@ -44,7 +48,7 @@ void test_da_p_empty() {
     assert(empty.size == 0);
     assert(empty.capacity == 0);
     da_destroy(&empty);
-    printf("da_p empty test passed.\n");
+    print_success("da_p_empty");
 }
 
 void test_da_p_append() {
@@ -58,7 +62,7 @@ void test_da_p_append() {
 
     da_destroy(&arr);
     assert(arr.data == NULL);
-    printf("da_p append test passed.\n");
+    print_success("da_p_append");
 }
 
 void test_da_i_single_element() {
@@ -68,7 +72,7 @@ void test_da_i_single_element() {
     assert(arr.capacity == DA_INITIAL_CAPACITY);
     assert(arr.data[0] == 42);
     da_destroy(&arr);
-    printf("da_i single element test passed.\n");
+    print_success("da_i_single_element");
 }
 
 void test_da_i_reuse_after_destroy() {
@@ -83,7 +87,7 @@ void test_da_i_reuse_after_destroy() {
     assert(arr.data[2] == 102);
 
     da_destroy(&arr);
-    printf("da_i reuse after destroy test passed.\n");
+    print_success("da_i_reuse_after_destroy");
 }
 
 void test_da_i_capacity_growth() {
@@ -98,7 +102,7 @@ void test_da_i_capacity_growth() {
     assert(arr.data[49] == 49);
 
     da_destroy(&arr);
-    printf("da_i capacity growth test passed.\n");
+    print_success("da_i_capacity_growth");
 }
 
 void test_da_i_boundary_values() {
@@ -110,7 +114,7 @@ void test_da_i_boundary_values() {
     for (int i = 0; i < 5; i++) assert(arr.data[i] == vals[i]);
 
     da_destroy(&arr);
-    printf("da_i boundary values test passed.\n");
+    print_success("da_i_boundary_values");
 }
 
 void test_da_i_reserve() {
@@ -128,10 +132,11 @@ void test_da_i_reserve() {
     assert(arr.data[0] == 42);
 
     da_destroy(&arr);
-    printf("da_i reserve test passed.\n");
+    print_success("da_i_reserve");
 }
 
 int main(void) {
+    printf(AN_BOLD AN_CYAN "Running dynamic_array tests..." AN_RESET "\n");
     test_da_i_append();
     test_da_i_double_destroy();
     test_da_p_empty();
@@ -141,7 +146,7 @@ int main(void) {
     test_da_i_capacity_growth();
     test_da_i_boundary_values();
     test_da_i_reserve();
-    printf("All dynamic_array tests passed!\n");
+    printf(AN_GREEN "All dynamic_array tests passed!\n" AN_RESET);
 
     return 0;
 }

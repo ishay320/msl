@@ -3,11 +3,15 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include "../ansi.h"
+
+void print_success(const char* test_name) { printf(AN_GREEN "Test '%s' passed.\n" AN_RESET, test_name); }
+
 void test_array_initialization() {
     int* arr = array_init(int);
     assert(arr != NULL);  // verify array is initialized
     array_free(arr);
-    printf("Initialization test passed.\n");
+    print_success("array_initialization");
 }
 
 void test_array_init_sized() {
@@ -16,7 +20,7 @@ void test_array_init_sized() {
     struct array* header = array_get_header(arr);
     assert(header->cap == 10);
     array_free(arr);
-    printf("Initialization with size test passed.\n");
+    print_success("array_init_sized");
 }
 
 void test_array_push_rval() {
@@ -26,7 +30,7 @@ void test_array_push_rval() {
     assert(header->len == 1);
     assert(arr[0] == 42);
     array_free(arr);
-    printf("Push r_val test passed.\n");
+    print_success("array_push_rval");
 }
 
 void test_array_push() {
@@ -37,7 +41,7 @@ void test_array_push() {
     assert(header->len == 1);
     assert(arr[0] == 42);
     array_free(arr);
-    printf("Push test passed.\n");
+    print_success("array_push");
 }
 
 void test_array_resizing_dynamicly() {
@@ -52,14 +56,14 @@ void test_array_resizing_dynamicly() {
         assert(arr[i] == i);
     }
     array_free(arr);
-    printf("Resizing dynamicly test passed.\n");
+    print_success("array_resizing_dynamicly");
 }
 
 void test_array_free() {
     int* arr = array_init(int);
     array_push_rval(arr, 10);
     array_free(arr);
-    printf("Free test passed.\n");
+    print_success("array_free");
 }
 
 void test_array_cap() {
@@ -68,7 +72,7 @@ void test_array_cap() {
     assert(array_cap(arr) == header->cap);
     assert(header->cap == 50);
     array_free(arr);
-    printf("Capacity test passed.\n");
+    print_success("array_cap");
 }
 
 void test_array_len() {
@@ -82,7 +86,7 @@ void test_array_len() {
     assert(array_len(arr) == 2);  // after two pushes, the length should be 2
 
     array_free(arr);
-    printf("Length test passed.\n");
+    print_success("array_len");
 }
 
 void test_array_stride() {
@@ -94,7 +98,7 @@ void test_array_stride() {
 
     array_free(int_arr);
     array_free(double_arr);
-    printf("Stride test passed.\n");
+    print_success("array_stride");
 }
 
 void test_array_reserve() {
@@ -107,7 +111,7 @@ void test_array_reserve() {
     assert(array_cap(array) == 30);
 
     array_free(array);
-    printf("Reserve test passed.\n");
+    print_success("array_reserve");
 }
 
 void test_array_resize() {
@@ -120,7 +124,7 @@ void test_array_resize() {
     assert(array_cap(array) == 30);
 
     array_free(array);
-    printf("Resize test passed.\n");
+    print_success("array_resize");
 }
 
 typedef struct {
@@ -183,10 +187,11 @@ void test_array_remove_index() {
     assert(array_len(sarr) == 0);
 
     array_free(sarr);
-    printf("Remove index test passed.\n");
+    print_success("array_remove_index");
 }
 
 int main(void) {
+    printf(AN_BOLD AN_CYAN "Running header_array tests..." AN_RESET "\n");
     test_array_initialization();
     test_array_init_sized();
     test_array_push_rval();
@@ -199,7 +204,7 @@ int main(void) {
     test_array_resize();
     test_array_reserve();
     test_array_remove_index();
-    printf("All header array tests passed!\n");
+    printf(AN_GREEN "All header array tests passed!\n" AN_RESET);
 
     return 0;
 }

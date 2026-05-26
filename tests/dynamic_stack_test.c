@@ -4,6 +4,10 @@
 #include <limits.h>
 #include <stdio.h>
 
+#include "../ansi.h"
+
+void print_success(const char* test_name) { printf(AN_GREEN "Test '%s' passed.\n" AN_RESET, test_name); }
+
 typedef struct {
     size_t size;
     size_t capacity;
@@ -18,7 +22,7 @@ void test_ds_push_and_top() {
     assert(ds_top(s) == 30);
     assert(ds_size(s) == 3);
     ds_destroy(&s);
-    printf("ds push and top test passed.\n");
+    print_success("ds_push_and_top");
 }
 
 void test_ds_pop_order() {
@@ -33,7 +37,7 @@ void test_ds_pop_order() {
     }
     assert(ds_is_empty(s));
     ds_destroy(&s);
-    printf("ds pop order test passed.\n");
+    print_success("ds_pop_order");
 }
 
 void test_ds_is_empty() {
@@ -44,7 +48,7 @@ void test_ds_is_empty() {
     (void)ds_pop(s);
     assert(ds_is_empty(s));
     ds_destroy(&s);
-    printf("ds is_empty test passed.\n");
+    print_success("ds_is_empty");
 }
 
 void test_ds_single_element() {
@@ -56,7 +60,7 @@ void test_ds_single_element() {
     assert(v == 99);
     assert(ds_is_empty(s));
     ds_destroy(&s);
-    printf("ds single element test passed.\n");
+    print_success("ds_single_element");
 }
 
 void test_ds_boundary_values() {
@@ -67,7 +71,7 @@ void test_ds_boundary_values() {
     for (int i = 3; i >= 0; i--) assert(ds_pop(s) == vals[i]);
     assert(ds_is_empty(s));
     ds_destroy(&s);
-    printf("ds boundary values test passed.\n");
+    print_success("ds_boundary_values");
 }
 
 void test_ds_push_many() {
@@ -78,7 +82,7 @@ void test_ds_push_many() {
     for (int i = 99; i >= 0; i--) assert(ds_pop(s) == i);
     assert(ds_is_empty(s));
     ds_destroy(&s);
-    printf("ds push many test passed.\n");
+    print_success("ds_push_many");
 }
 
 void test_ds_size() {
@@ -92,7 +96,7 @@ void test_ds_size() {
     (void)ds_pop(s);
     assert(ds_size(s) == 2);
     ds_destroy(&s);
-    printf("ds size test passed.\n");
+    print_success("ds_size");
 }
 
 void test_ds_reuse_after_empty() {
@@ -107,10 +111,11 @@ void test_ds_reuse_after_empty() {
     assert(ds_size(s) == 2);
     assert(ds_top(s) == 20);
     ds_destroy(&s);
-    printf("ds reuse after empty test passed.\n");
+    print_success("ds_reuse_after_empty");
 }
 
 int main(void) {
+    printf(AN_BOLD AN_CYAN "Running dynamic_stack tests..." AN_RESET "\n");
     test_ds_push_and_top();
     test_ds_pop_order();
     test_ds_is_empty();
@@ -119,6 +124,6 @@ int main(void) {
     test_ds_push_many();
     test_ds_size();
     test_ds_reuse_after_empty();
-    printf("All dynamic_stack tests passed!\n");
+    printf(AN_GREEN "All dynamic_stack tests passed!\n" AN_RESET);
     return 0;
 }

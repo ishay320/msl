@@ -6,8 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void test_graph_initialization()
-{
+#include "../ansi.h"
+
+void print_success(const char* test_name) { printf(AN_GREEN "Test '%s' passed.\n" AN_RESET, test_name); }
+
+void test_graph_initialization() {
     struct graph* g = graph_init();
     assert(g != NULL);
     assert(g->nodes != NULL);
@@ -15,11 +18,10 @@ void test_graph_initialization()
     assert(g->inc_id == 0);
 
     graph_free(g);
-    printf("Graph initialization test passed.\n");
+    print_success("graph_initialization");
 }
 
-void test_push_node()
-{
+void test_push_node() {
     struct graph* g = graph_init();
     int* p          = malloc(sizeof(*p));
 
@@ -35,11 +37,10 @@ void test_push_node()
 
     graph_free(g);
     free(p);
-    printf("Push node test passed.\n");
+    print_success("push_node");
 }
 
-void test_connect_nodes()
-{
+void test_connect_nodes() {
     struct graph* g = graph_init();
     int* p          = malloc(sizeof(*p));
 
@@ -57,22 +58,20 @@ void test_connect_nodes()
 
     graph_free(g);
     free(p);
-    printf("Connect nodes test passed.\n");
+    print_success("connect_nodes");
 }
 
-void test_free_graph()
-{
+void test_free_graph() {
     struct graph* g = graph_init();
     int* p          = malloc(sizeof(*p));
 
     graph_node_push(g, p);
     graph_free(g);
     free(p);
-    printf("Free graph test passed.\n");
+    print_success("free_graph");
 }
 
-void test_graph_node_get()
-{
+void test_graph_node_get() {
     struct graph* g = graph_init();
     int* p1         = malloc(sizeof(*p1));
     int* p2         = malloc(sizeof(*p2));
@@ -80,8 +79,8 @@ void test_graph_node_get()
     size_t id1 = graph_node_push(g, p1);
     size_t id2 = graph_node_push(g, p2);
 
-    struct node* n1 = graph_node_get(g, id1);
-    struct node* n2 = graph_node_get(g, id2);
+    struct node_i* n1 = graph_node_get(g, id1);
+    struct node_i* n2 = graph_node_get(g, id2);
 
     assert(n1 != NULL);
     assert(n2 != NULL);
@@ -97,13 +96,12 @@ void test_graph_node_get()
     graph_free(g);
     free(p1);
     free(p2);
-    printf("Graph node get test passed.\n");
+    print_success("graph_node_get");
 }
 
-bool node_equals(struct node n) { return *((int*)n.data) == 42; }
+bool node_equals(struct node_i n) { return *((int*)n.data) == 42; }
 
-void test_graph_node_find()
-{
+void test_graph_node_find() {
     struct graph* g = graph_init();
     int* p1         = malloc(sizeof(*p1));
     int* p2         = malloc(sizeof(*p2));
@@ -114,7 +112,7 @@ void test_graph_node_find()
     graph_node_push(g, p1);
     graph_node_push(g, p2);
 
-    struct node* found = graph_node_find(g, node_equals);
+    struct node_i* found = graph_node_find(g, node_equals);
 
     assert(found != NULL);
     assert(*((int*)found->data) == 42);
@@ -122,21 +120,19 @@ void test_graph_node_find()
     graph_free(g);
     free(p1);
     free(p2);
-    printf("Graph node find test passed.\n");
+    print_success("graph_node_find");
 }
 
-void test_graph_edge_creation_memory_safety()
-{
+void test_graph_edge_creation_memory_safety() {
     struct graph* g = graph_init();
     assert(graph_eadge_create(g, 1, 2) == false);
     assert(array_len(g->edges) == 0);
 
     graph_free(g);
-    printf("Edge creation memory safety test passed.\n");
+    print_success("edge_creation_memory_safety");
 }
 
-void test_graph_node_edges_get()
-{
+void test_graph_node_edges_get() {
     struct graph* g = graph_init();
     int* foo        = NULL;
     size_t node_a   = graph_node_push(g, foo);
@@ -154,11 +150,11 @@ void test_graph_node_edges_get()
     free(e);
 
     graph_free(g);
-    printf("Edges get test passed.");
+    print_success("graph_node_edges_get");
 }
 
-int main()
-{
+int main() {
+    printf(AN_BOLD AN_CYAN "Running graph tests..." AN_RESET "\n");
     test_graph_initialization();
     test_push_node();
     test_connect_nodes();
@@ -167,7 +163,7 @@ int main()
     test_graph_node_find();
     test_graph_edge_creation_memory_safety();
     test_graph_node_edges_get();
-    printf("All graph tests passed!\n");
+    printf(AN_GREEN "All graph tests passed!\n" AN_RESET);
 
     return 0;
 }
