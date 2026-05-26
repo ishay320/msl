@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct node_i_s {
     struct node_i_s* next;
@@ -11,9 +12,6 @@ typedef struct node_i_s {
 static int find_data_1(node_i_s* n) { return n->data == 1; }
 static int find_data_2(node_i_s* n) { return n->data == 2; }
 static int find_data_99(node_i_s* n) { return n->data == 99; }
-
-static int g_sum = 0;
-static void sum_node(node_i_s* n) { g_sum += n->data; }
 
 int main(void) {
     // test ll_insert_next: a -> b -> c
@@ -134,10 +132,28 @@ int main(void) {
         node_i_s c = {.data = 3};
         ll_insert_next(&a, &b);
         ll_insert_next(&b, &c);
-        g_sum = 0;
-        ll_for_each_func(a, sum_node);
-        assert(g_sum == 6);
+        int sum = 0;
+        ll_for_each(a, i) { sum += i->data; }
+        assert(sum == 6);
         printf("ll_for_each_func passed.\n");
+    }
+
+    {
+        node_i_s* base = calloc(1, sizeof(node_i_s));
+        base->data     = 1;
+        for (int i = 0; i < 10; i++) {
+            node_i_s* n = calloc(1, sizeof(node_i_s));
+            n->data     = i;
+            ll_insert_tail(base, n);
+        }
+        assert(ll_count(*base) == 11);
+
+        for (typeof(base) cur = base, next; cur != NULL; cur = next) {
+            next = cur->next;
+            free(cur);
+        }
+
+        printf("ll_free passed.\n");
     }
 
     printf("All tests passed!\n");

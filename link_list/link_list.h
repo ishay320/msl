@@ -92,16 +92,3 @@ Node type prefixes:
         for (; __i->next != NULL; __i = __i->next); \
         __i->next = node;                           \
     })
-
-/**
- * @brief Apply a function to each node in the list
- *
- * @param head The head node (value, not pointer)
- * @param func Function pointer: void func(node_type*) - called for each node
- */
-#define ll_for_each_func(head, func) \
-    ({                               \
-        ll_for_each(head, __i) {     \
-            func(__i);               \
-    }                                \
-    })
