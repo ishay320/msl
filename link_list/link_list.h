@@ -48,6 +48,9 @@ Node type prefixes:
  */
 #define ll_for_each(base, i_name) for (typeof(base)* i_name = &base; i_name != NULL; i_name = i_name->next)
 
+#define ll_for_each_free(base, free_func) \
+    ll_for_each(base, __i) { free_func(__i) }
+
 /**
  * @brief Count nodes in the list
  *
@@ -88,7 +91,7 @@ Node type prefixes:
  */
 #define ll_insert_tail(head, node)                  \
     ({                                              \
-        typeof(*head)* __i = head;                  \
+        typeof(head) __i = head;                    \
         for (; __i->next != NULL; __i = __i->next); \
         __i->next = node;                           \
     })
