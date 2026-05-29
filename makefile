@@ -1,5 +1,5 @@
 CFLAGS       = -Wall -Wextra -g -Werror=extra -fsanitize=address,undefined
-TESTS        = graph header_array dynamic_array dynamic_stack link_list
+TESTS        = graph header_array dynamic_array dynamic_stack link_list queue_a
 INCLUDE_DIRS = . arrays queue stack link_list
 INCLUDES     = $(addprefix -I, $(INCLUDE_DIRS))
 
