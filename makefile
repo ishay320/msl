@@ -20,16 +20,18 @@ $(BUILD_DIR)/%: tests/%_test.c | $(BUILD_DIR)
 
 -include $(DEPS)
 
+COV_DIR = cov
+
 coverage: CFLAGS = -Wall -Wextra -g --coverage
 coverage: rm
-	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR) $(COV_DIR)
 	$(foreach t,$(TESTS), \
 		cc $(CFLAGS) $(INCLUDES) -c tests/$(t)_test.c -o $(BUILD_DIR)/$(t)_test.o && \
 		cc --coverage $(BUILD_DIR)/$(t)_test.o -o $(BUILD_DIR)/$(t);)
 	$(foreach t,$(TESTS_BIN),./$(t);)
-	gcov --object-directory $(BUILD_DIR) tests/*_test.c
+	cd $(COV_DIR) && gcov --object-directory ../$(BUILD_DIR) $(addprefix ../,$(wildcard tests/*_test.c))
 
 rm:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(COV_DIR)
 
 .PHONY: all test rm coverage
