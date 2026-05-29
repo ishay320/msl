@@ -2,9 +2,12 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stddef.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "ansi.h"
+#include "test_suite.h"
 
 typedef struct queue {
     size_t start;
@@ -13,8 +16,6 @@ typedef struct queue {
     size_t cap;
     int* data;
 } queue;
-
-void print_success(const char* test_name) { printf(AN_GREEN "Test '%s' passed.\n" AN_RESET, test_name); }
 
 void test_qa_fifo_order(void) {
     queue q    = qa_init(queue, 5);
@@ -28,7 +29,6 @@ void test_qa_fifo_order(void) {
     }
     assert(qa_is_empty(q));
     qa_destroy(q);
-    print_success("qa_fifo_order");
 }
 
 void test_qa_is_empty(void) {
@@ -41,7 +41,6 @@ void test_qa_is_empty(void) {
     (void)out;
     assert(qa_is_empty(q));
     qa_destroy(q);
-    print_success("qa_is_empty");
 }
 
 void test_qa_is_full(void) {
@@ -53,7 +52,6 @@ void test_qa_is_full(void) {
     assert(!qa_push(q, 4));
     assert(qa_size(q) == 3);
     qa_destroy(q);
-    print_success("qa_is_full");
 }
 
 void test_qa_front_back(void) {
@@ -69,7 +67,6 @@ void test_qa_front_back(void) {
     assert(b == 33);
     assert(qa_size(q) == 3); /* peek must not modify size */
     qa_destroy(q);
-    print_success("qa_front_back");
 }
 
 void test_qa_circular_wrap(void) {
@@ -99,7 +96,6 @@ void test_qa_circular_wrap(void) {
     assert(out == 6);
     assert(qa_is_empty(q));
     qa_destroy(q);
-    print_success("qa_circular_wrap");
 }
 
 void test_qa_boundary_values(void) {
@@ -113,7 +109,6 @@ void test_qa_boundary_values(void) {
         assert(out == vals[i]);
     }
     qa_destroy(q);
-    print_success("qa_boundary_values");
 }
 
 void test_qa_clear(void) {
@@ -129,7 +124,6 @@ void test_qa_clear(void) {
     assert(qa_pop(q, out));
     assert(out == 99);
     qa_destroy(q);
-    print_success("qa_clear");
 }
 
 void test_qa_destroy(void) {
@@ -139,7 +133,6 @@ void test_qa_destroy(void) {
     assert(q.data == NULL);
     assert(q.size == 0);
     assert(q.cap == 0);
-    print_success("qa_destroy");
 }
 
 void test_qa_pop_empty(void) {
@@ -148,7 +141,6 @@ void test_qa_pop_empty(void) {
     assert(!qa_pop(q, out));
     assert(out == 0); /* out unchanged */
     qa_destroy(q);
-    print_success("qa_pop_empty");
 }
 
 void test_qa_front_back_empty(void) {
@@ -159,7 +151,6 @@ void test_qa_front_back_empty(void) {
     assert(f == 0); /* out unchanged */
     assert(b == 0);
     qa_destroy(q);
-    print_success("qa_front_back_empty");
 }
 
 typedef struct {
@@ -193,22 +184,21 @@ void test_qa_big_struct(void) {
     }
     assert(qa_is_empty(q));
     qa_destroy(q);
-    print_success("qa_big_struct");
 }
 
 int main(void) {
-    printf(AN_BOLD AN_CYAN "Running queue_a tests..." AN_RESET "\n");
-    test_qa_fifo_order();
-    test_qa_is_empty();
-    test_qa_is_full();
-    test_qa_front_back();
-    test_qa_circular_wrap();
-    test_qa_boundary_values();
-    test_qa_clear();
-    test_qa_destroy();
-    test_qa_pop_empty();
-    test_qa_front_back_empty();
-    test_qa_big_struct();
-    printf(AN_GREEN "All queue_a tests passed!\n" AN_RESET);
+    START_SUITE;
+    RUN(test_qa_fifo_order);
+    RUN(test_qa_is_empty);
+    RUN(test_qa_is_full);
+    RUN(test_qa_front_back);
+    RUN(test_qa_circular_wrap);
+    RUN(test_qa_boundary_values);
+    RUN(test_qa_clear);
+    RUN(test_qa_destroy);
+    RUN(test_qa_pop_empty);
+    RUN(test_qa_front_back_empty);
+    RUN(test_qa_big_struct);
+    SUMMERY;
     return 0;
 }

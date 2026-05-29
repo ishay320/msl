@@ -1,39 +1,33 @@
-#include "../arrays/header_array.h"
+#include "arrays/header_array.h"
 
 #include <assert.h>
-#include <stdio.h>
 
-#include "../ansi.h"
+#include "test_suite.h"
 
-void print_success(const char* test_name) { printf(AN_GREEN "Test '%s' passed.\n" AN_RESET, test_name); }
-
-void test_array_initialization() {
+void test_array_initialization(void) {
     int* arr = array_init(int);
-    assert(arr != NULL);  // verify array is initialized
+    assert(arr != NULL);
     array_free(arr);
-    print_success("array_initialization");
 }
 
-void test_array_init_sized() {
+void test_array_init_sized(void) {
     int* arr = array_init_sized(int, 10);
-    assert(arr != NULL);  // verify array is initialized
+    assert(arr != NULL);
     struct array* header = array_get_header(arr);
     assert(header->cap == 10);
     array_free(arr);
-    print_success("array_init_sized");
 }
 
-void test_array_push_rval() {
+void test_array_push_rval(void) {
     int* arr = array_init(int);
     array_push_rval(arr, 42);
     struct array* header = array_get_header(arr);
     assert(header->len == 1);
     assert(arr[0] == 42);
     array_free(arr);
-    print_success("array_push_rval");
 }
 
-void test_array_push() {
+void test_array_push(void) {
     int* arr = array_init(int);
     int item = 42;
     array_push(arr, item);
@@ -41,10 +35,9 @@ void test_array_push() {
     assert(header->len == 1);
     assert(arr[0] == 42);
     array_free(arr);
-    print_success("array_push");
 }
 
-void test_array_resizing_dynamicly() {
+void test_array_resizing_dynamicly(void) {
     int* arr = array_init(int);
     for (int i = 0; i < 100; i++) {
         array_push(arr, i);
@@ -56,52 +49,47 @@ void test_array_resizing_dynamicly() {
         assert(arr[i] == i);
     }
     array_free(arr);
-    print_success("array_resizing_dynamicly");
 }
 
-void test_array_free() {
+void test_array_free(void) {
     int* arr = array_init(int);
     array_push_rval(arr, 10);
     array_free(arr);
-    print_success("array_free");
 }
 
-void test_array_cap() {
+void test_array_cap(void) {
     int* arr             = array_init_sized(int, 50);
     struct array* header = array_get_header(arr);
     assert(array_cap(arr) == header->cap);
     assert(header->cap == 50);
     array_free(arr);
-    print_success("array_cap");
 }
 
-void test_array_len() {
+void test_array_len(void) {
     int* arr = array_init(int);
-    assert(array_len(arr) == 0);  // initially, the length should be 0
+    assert(array_len(arr) == 0);
 
     array_push_rval(arr, 42);
-    assert(array_len(arr) == 1);  // after one push, the length should be 1
+    assert(array_len(arr) == 1);
 
     array_push_rval(arr, 100);
-    assert(array_len(arr) == 2);  // after two pushes, the length should be 2
+    assert(array_len(arr) == 2);
 
     array_free(arr);
-    print_success("array_len");
 }
 
-void test_array_stride() {
+void test_array_stride(void) {
     int* int_arr = array_init(int);
-    assert(array_stride(int_arr) == sizeof(int));  // stride for int array should match sizeof(int)
+    assert(array_stride(int_arr) == sizeof(int));
 
     double* double_arr = array_init(double);
-    assert(array_stride(double_arr) == sizeof(double));  // stride for double array should match sizeof(double)
+    assert(array_stride(double_arr) == sizeof(double));
 
     array_free(int_arr);
     array_free(double_arr);
-    print_success("array_stride");
 }
 
-void test_array_reserve() {
+void test_array_reserve(void) {
     int* array = array_init(int);
     assert(array_reserve(array, 10));
     assert(array_cap(array) == 10);
@@ -111,10 +99,9 @@ void test_array_reserve() {
     assert(array_cap(array) == 30);
 
     array_free(array);
-    print_success("array_reserve");
 }
 
-void test_array_resize() {
+void test_array_resize(void) {
     int* array = array_init(int);
     assert(array_resize(array, 10));
     assert(array_cap(array) == 10);
@@ -124,7 +111,6 @@ void test_array_resize() {
     assert(array_cap(array) == 30);
 
     array_free(array);
-    print_success("array_resize");
 }
 
 typedef struct {
@@ -133,7 +119,7 @@ typedef struct {
     char tag[8];
 } test_item_t;
 
-void test_array_remove_index() {
+void test_array_remove_index(void) {
     int* array = array_init(int);
 
     array_push_rval(array, 12);
@@ -160,7 +146,6 @@ void test_array_remove_index() {
 
     array_free(array);
 
-    /* struct test: stride > 1, verifies dst offset uses stride */
     test_item_t* sarr = array_init(test_item_t);
     test_item_t a     = {.id = 1, .value = 1.0f, .tag = "one"};
     test_item_t b     = {.id = 2, .value = 2.0f, .tag = "two"};
@@ -169,42 +154,37 @@ void test_array_remove_index() {
     array_push(sarr, b);
     array_push(sarr, c);
 
-    /* remove middle: [1,2,3] -> [1,3] */
     array_remove_index(sarr, 1);
     assert(array_len(sarr) == 2);
     assert(sarr[0].id == 1);
     assert(sarr[1].id == 3);
     assert(sarr[1].value == 3.0f);
 
-    /* remove first: [1,3] -> [3] */
     array_remove_index(sarr, 0);
     assert(array_len(sarr) == 1);
     assert(sarr[0].id == 3);
     assert(sarr[0].value == 3.0f);
 
-    /* remove last: [3] -> [] */
     array_remove_index(sarr, 0);
     assert(array_len(sarr) == 0);
 
     array_free(sarr);
-    print_success("array_remove_index");
 }
 
 int main(void) {
-    printf(AN_BOLD AN_CYAN "Running header_array tests..." AN_RESET "\n");
-    test_array_initialization();
-    test_array_init_sized();
-    test_array_push_rval();
-    test_array_push();
-    test_array_resizing_dynamicly();
-    test_array_free();
-    test_array_cap();
-    test_array_len();
-    test_array_stride();
-    test_array_resize();
-    test_array_reserve();
-    test_array_remove_index();
-    printf(AN_GREEN "All header array tests passed!\n" AN_RESET);
-
+    START_SUITE;
+    RUN(test_array_initialization);
+    RUN(test_array_init_sized);
+    RUN(test_array_push_rval);
+    RUN(test_array_push);
+    RUN(test_array_resizing_dynamicly);
+    RUN(test_array_free);
+    RUN(test_array_cap);
+    RUN(test_array_len);
+    RUN(test_array_stride);
+    RUN(test_array_resize);
+    RUN(test_array_reserve);
+    RUN(test_array_remove_index);
+    SUMMERY;
     return 0;
 }
